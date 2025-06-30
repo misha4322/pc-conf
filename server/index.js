@@ -25,7 +25,6 @@ app.use('/api/basket', basketRouter);
 app.use('/api/favorites', favoriteRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/components', productRouter);
-
 app.get('/api/builds/:id/components', async (req, res) => {
   try {
     const buildId = req.params.id;
@@ -42,7 +41,6 @@ app.get('/api/builds/:id/components', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

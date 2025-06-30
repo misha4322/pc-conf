@@ -33,7 +33,6 @@ export const syncBasket = async (req, res) => {
 
 export const getBasket = async (req, res) => {
   const user_id = req.user.userId;
-
   try {
     const { rows } = await pool.query(
       `SELECT c.*, b.name, b.image_url, b.total_price

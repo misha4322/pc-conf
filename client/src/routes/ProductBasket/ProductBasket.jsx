@@ -38,7 +38,6 @@ export const ProductBasket = () => {
   const [error, setError] = useState(null);
   const [buildComponents, setBuildComponents] = useState({});
   const [loadingComponents, setLoadingComponents] = useState({});
-
   useEffect(() => {
     if (token) {
       dispatch(syncBasketWithServer())
@@ -49,7 +48,7 @@ export const ProductBasket = () => {
         });
     }
   }, [dispatch, token]);
-
+  
   useEffect(() => {
     const loadComponents = async () => {
       const componentsMap = {};
@@ -69,12 +68,10 @@ export const ProductBasket = () => {
           }
           loadingMap[item.build_id] = false;
         }
-      }
-      
+      }  
       setBuildComponents(prev => ({ ...prev, ...componentsMap }));
       setLoadingComponents(prev => ({ ...prev, ...loadingMap }));
     };
-    
     if (basketItems.length > 0) {
       loadComponents();
     }
@@ -90,7 +87,6 @@ export const ProductBasket = () => {
       alert("Введите корректный номер телефона (11 цифр)");
       return;
     }
-
     try {
       const requestBody = {
         phone: phoneNumber,
@@ -100,7 +96,6 @@ export const ProductBasket = () => {
           unit_price: item.total_price
         })),
       };
-
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: {
@@ -118,7 +113,6 @@ export const ProductBasket = () => {
           total: totalPrice,
           status: 'pending'
         });
-        
         setOrderSuccess(true);
         dispatch(clearBasket());
       } else {
@@ -186,8 +180,7 @@ export const ProductBasket = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
+                  </div>                  
                   <div className={s.itemActions}>
                     <div className={s.quantityControls}>
                       <button 
@@ -216,10 +209,8 @@ export const ProductBasket = () => {
               ))}
             </div>
           )}
-
           <div className={s.summary}>
             <h3 className={s.total}>Итого: {totalPrice} ₽</h3>
-            
             <div className={s.orderSection}>
               <IMaskInput
                 className={s.phoneInput}
@@ -228,7 +219,6 @@ export const ProductBasket = () => {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
-              
               <div className={s.actionButtons}>
                 <button
                   onClick={handleOrder}
@@ -262,7 +252,6 @@ export const ProductBasket = () => {
             >
               Перейти к заказам
             </button>
-            
             <button 
               onClick={() => navigate("/")} 
               className={`${s.continueButton} ${s.animateButton}`}

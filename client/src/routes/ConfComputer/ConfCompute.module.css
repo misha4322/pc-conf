@@ -354,7 +354,7 @@ input[type="radio"]:checked {
 
 @media (max-width: 768px) {
   .categoryNav {
-    top: 60px; /* Изменено с 0 на 60px */
+    top: 60px; 
     padding: 10px 5px;
     gap: 8px;
     overflow-x: auto;

@@ -5,15 +5,11 @@ export default class Order {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      
-      // Создаем заказ
       const { rows: [order] } = await client.query(
         `INSERT INTO Orders (user_id, phone, total)
          VALUES ($1, $2, $3) RETURNING *`,
         [user_id, phone, total]
       );
-      
-      // Добавляем товары в заказ (используем Order_Builds)
       for (const item of items) {
         await client.query(
           `INSERT INTO Order_Builds (order_id, build_id, quantity, unit_price)
@@ -21,9 +17,8 @@ export default class Order {
           [order.id, item.build_id, item.quantity, item.unit_price]
         );
       }
-      
       await client.query('COMMIT');
-      return { ...order, items }; // Возвращаем заказ с items
+      return { ...order, items };
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;

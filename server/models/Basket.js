@@ -41,9 +41,7 @@ export default class Basket {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      // Удаляем все текущие записи корзины для пользователя
       await client.query('DELETE FROM Cart WHERE user_id = $1', [user_id]);
-      // Добавляем новые элементы
       for (const item of items) {
         await client.query(
           `INSERT INTO Cart (user_id, build_id, quantity)
@@ -52,7 +50,6 @@ export default class Basket {
         );
       }
       await client.query('COMMIT');
-      // Возвращаем обновленную корзину
       const { rows } = await client.query(
         `SELECT c.*, b.name, b.image_url, b.total_price
          FROM Cart c

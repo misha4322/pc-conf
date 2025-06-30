@@ -19,7 +19,6 @@ const categoryLabels = {
   motherboard: "Материнская плата",
 };
 
-// Статусы заказов с переводами
 const orderStatuses = {
   pending: { text: "Ожидает обработки", icon: <Clock size={16} />, className: s.statusPending },
   preparing: { text: "Готовится", icon: <Clock size={16} />, className: s.statusPreparing },
@@ -78,12 +77,9 @@ export default function Profile() {
         console.error("Orders load error response:", errorText);
         return;
       }
-
       const data = await res.json();
       setOrders(data);
       setUserOrderCount(data.length);
-
-      // Инициализируем таймеры для заказов в статусе "preparing"
       const preparingOrders = data.filter(order => order.status === 'preparing');
       initializeTimers(preparingOrders);
     } catch (error) {
@@ -99,7 +95,6 @@ export default function Profile() {
     orders.forEach(order => {
       const readyTime = new Date(order.created_at);
       readyTime.setMinutes(readyTime.getMinutes() + 30);
-
       newTimers[order.id] = {
         readyTime,
         remaining: calculateRemainingTime(readyTime)
@@ -125,13 +120,11 @@ export default function Profile() {
     const timerInterval = setInterval(() => {
       const updatedTimers = { ...timers };
       let hasChanges = false;
-
       for (const orderId in updatedTimers) {
         if (updatedTimers[orderId].remaining !== "00:00") {
           updatedTimers[orderId].remaining = calculateRemainingTime(updatedTimers[orderId].readyTime);
           hasChanges = true;
         } else {
-          // Если время вышло, обновляем статус заказа
           setOrders(prev => prev.map(order =>
             order.id === orderId ? { ...order, status: 'ready' } : order
           ));
@@ -139,12 +132,10 @@ export default function Profile() {
           hasChanges = true;
         }
       }
-
       if (hasChanges) {
         setTimers(updatedTimers);
       }
     }, 1000);
-
     return () => clearInterval(timerInterval);
   }, [timers]);
 
@@ -167,7 +158,6 @@ export default function Profile() {
       navigate("/login");
       return;
     }
-
     dispatch(addToBasket({
       build_id: fav.id,
       name: fav.name,
@@ -175,7 +165,6 @@ export default function Profile() {
       total_price: fav.total_price,
       quantity: 1
     }));
-
     try {
       await dispatch(syncBasketWithServer()).unwrap();
       navigate("/basket");
@@ -205,7 +194,6 @@ export default function Profile() {
       });
 
       if (res.ok) {
-        // Обновляем статус заказа локально
         setOrders(prev => prev.map(order =>
           order.id === orderId ? { ...order, status: 'completed' } : order
         ));
@@ -250,7 +238,6 @@ export default function Profile() {
               </span>
             </div>
           </div>
-
           <div className={s.orderDetails}>
             <div className={s.orderMeta}>
               <p><strong>Сумма:</strong> {order.total} ₽</p>
@@ -269,7 +256,6 @@ export default function Profile() {
               </ul>
             </div>
           </div>
-
           {order.status === 'ready' && (
             <div className={s.orderActions}>
               <button
@@ -302,7 +288,6 @@ export default function Profile() {
         </button>
 
       </div>
-
       {activeTab === "favorites" && (
         <div className={s.favorites}>
           <h2>Избранное</h2>
@@ -358,7 +343,6 @@ export default function Profile() {
           )}
         </div>
       )}
-
       {activeTab === "orders" && (
         <div className={s.ordersSection}>
           <h2 className={s.sectionTitle}>Мои заказы</h2>

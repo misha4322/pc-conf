@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider, useDispatch } from "react-redux";

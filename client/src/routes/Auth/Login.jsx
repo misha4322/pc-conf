@@ -20,9 +20,8 @@ export default function Login() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError(null); // Сбрасываем ошибку при изменении поля
+    setError(null); 
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -30,8 +29,7 @@ export default function Login() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      });
-      
+      }); 
       if (res.ok) {
         const data = await res.json();
         dispatch(setUser(data));
@@ -56,7 +54,6 @@ export default function Login() {
       setError("Ошибка сети: " + err.message);
     }
   };
-
   return (
     <div className={s.authContainer}>
       <form onSubmit={handleSubmit} className={s.authForm}>

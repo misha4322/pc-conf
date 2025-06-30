@@ -12,7 +12,6 @@ export const getAll = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 export const getById = async (req, res) => {
   const id = +req.params.id;
   try {

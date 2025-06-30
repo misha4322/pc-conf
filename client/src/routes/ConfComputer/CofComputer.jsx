@@ -107,12 +107,10 @@ export const ConfComputer = () => {
       navigate("/login", { state: { from: location.pathname } });
       return;
     }
-
     if (!isComplete()) {
       alert("Выберите все комплектующие!");
       return;
     }
-
     try {
       if (favoriteItem) {
         await dispatch(removeFavoriteAsync(favoriteItem.id)).unwrap();
@@ -135,12 +133,10 @@ export const ConfComputer = () => {
             is_predefined: false
           }),
         });
-
         if (!buildRes.ok) {
           const errorData = await buildRes.json();
           throw new Error(errorData.message || 'Ошибка создания сборки');
         }
-
         const build = await buildRes.json();
         await dispatch(addFavoriteAsync(build)).unwrap();
         alert("Сборка добавлена в избранное!");
@@ -221,7 +217,6 @@ export const ConfComputer = () => {
           is_predefined: false
         }),
       });
-
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || 'Ошибка создания сборки');
@@ -236,11 +231,9 @@ export const ConfComputer = () => {
         total_price: Math.round(build.total_price),
         quantity: 1
       }));
-
       if (token) {
         await dispatch(syncBasketWithServer()).unwrap();
       }
-
       navigate("/basket");
       alert("Сборка добавлена в корзину!");
     } catch (err) {
@@ -280,7 +273,6 @@ export const ConfComputer = () => {
           category === "motherboard"
             ? filterMotherboards(productsByCategory[category])
             : productsByCategory[category];
-
         return (
           <div
             key={category}
@@ -291,7 +283,6 @@ export const ConfComputer = () => {
               <img src={sectionIcons[category]} alt="" />
               <h2>{categoryLabels[category]}</h2>
             </div>
-
             {items.map((item) => (
               <label key={item.id} className={s.itemLabel}>
                 <div className={s.div_konfigurati}>

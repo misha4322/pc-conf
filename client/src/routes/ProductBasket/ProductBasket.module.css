@@ -378,7 +378,7 @@
   transform: translateY(-2px);
 }
 
-/* Адаптация для планшетов */
+
 @media (max-width: 768px) {
   .div_basket {
     padding: 25px;
@@ -421,7 +421,7 @@
   }
 }
 
-/* Адаптация для мобильных устройств */
+
 @media (max-width: 480px) {
   .basketContainer {
     padding: 15px 10px;
@@ -511,7 +511,7 @@
   }
 }
 
-/* Адаптация для очень маленьких экранов */
+
 @media (max-width: 360px) {
   .basketContainer {
     padding: 10px 5px;

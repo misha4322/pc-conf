@@ -13,35 +13,27 @@ const parseJwt = (token) => {
         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-
     return JSON.parse(jsonPayload);
   } catch (e) {
     console.error("Failed to parse JWT", e);
     return null;
   }
 };
-
-// Функция для получения начального состояния с учетом оффлайн-режима
 const getInitialState = () => {
   const token = localStorage.getItem('token');
   const userData = localStorage.getItem('userData');
   let user = null;
   let favorites = [];
-  let orders = []; // Добавляем заказы
+  let orders = []; 
   let isInitialized = false;
-
   if (token && userData) {
     try {
       user = JSON.parse(userData);
       isInitialized = true;
-      
-      // Загрузка избранного из localStorage
       const userFavorites = localStorage.getItem(`favorites_${user.id}`);
       if (userFavorites) {
         favorites = JSON.parse(userFavorites);
       }
-      
-      // Загрузка заказов из localStorage
       const userOrders = localStorage.getItem(`orders_${user.id}`);
       if (userOrders) {
         orders = JSON.parse(userOrders);
@@ -50,18 +42,16 @@ const getInitialState = () => {
       console.error('Error parsing saved user data:', e);
     }
   }
-
   return {
     user,
     token,
     favorites,
-    orders, // Добавляем заказы в начальное состояние
+    orders, 
     isInitialized,
     error: null,
     status: 'idle',
   };
 };
-
 const initialState = getInitialState();
 
 export const initializeUser = createAsyncThunk(
@@ -72,14 +62,11 @@ export const initializeUser = createAsyncThunk(
     if (!token) {
       return { user: null, token: null, favorites: [], orders: [], isInitialized: true };
     }
-
     try {
       const res = await fetch('/api/auth/check', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (!res.ok) {
-        // Оставляем токен для оффлайн-режима, если статус не 401
         if (res.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("userData");
@@ -90,8 +77,6 @@ export const initializeUser = createAsyncThunk(
       const user = await res.json();
       localStorage.setItem("currentUserId", user.id);
       localStorage.setItem("userData", JSON.stringify(user));
-
-      // Загрузка избранного
       let favorites = [];
       try {
         const favoritesRes = await fetch('/api/favorites', {
@@ -104,8 +89,6 @@ export const initializeUser = createAsyncThunk(
       } catch (favoritesError) {
         console.warn("Failed to load favorites", favoritesError);
       }
-
-      // Загрузка заказов
       let orders = [];
       try {
         const ordersRes = await fetch('/api/orders', {
@@ -118,8 +101,6 @@ export const initializeUser = createAsyncThunk(
       } catch (ordersError) {
         console.warn("Failed to load orders", ordersError);
       }
-
-      // Загрузка корзины
       try {
         const basketRes = await fetch('/api/basket', {
           headers: { Authorization: `Bearer ${token}` },
@@ -138,16 +119,14 @@ export const initializeUser = createAsyncThunk(
       } catch (basketError) {
         console.warn("Failed to load basket", basketError);
       }
-
       return { 
         user, 
         token, 
         favorites,
-        orders, // Возвращаем заказы
+        orders, 
         isInitialized: true 
       };
     } catch (error) {
-      // Оффлайн режим - используем сохраненные данные
       const userData = localStorage.getItem("userData");
       if (userData) {
         const user = JSON.parse(userData);
@@ -157,16 +136,14 @@ export const initializeUser = createAsyncThunk(
           user, 
           token, 
           favorites,
-          orders, // Возвращаем заказы в оффлайн-режиме
+          orders, 
           isInitialized: true 
         };
       }
-      
       return rejectWithValue(error.message);
     }
   }
 );
-
 export const addFavoriteAsync = createAsyncThunk(
   'user/addFavorite',
   async (build, { getState, rejectWithValue }) => {
@@ -192,7 +169,6 @@ export const addFavoriteAsync = createAsyncThunk(
     }
   }
 );
-
 export const removeFavoriteAsync = createAsyncThunk(
   'user/removeFavorite',
   async (favoriteId, { getState, rejectWithValue }) => {
@@ -204,7 +180,6 @@ export const removeFavoriteAsync = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      
       if (!res.ok) {
         const errorData = await res.json();
         return rejectWithValue(errorData.message || 'Failed to remove favorite');
@@ -216,7 +191,6 @@ export const removeFavoriteAsync = createAsyncThunk(
     }
   }
 );
-
 export const changePassword = createAsyncThunk(
   'user/changePassword',
   async ({ currentPassword, newPassword }, { getState, rejectWithValue }) => {
@@ -236,14 +210,12 @@ export const changePassword = createAsyncThunk(
         const errorData = await res.json();
         throw new Error(errorData.message || 'Failed to change password');
       }
-
       return await res.json();
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
-
 export const updateFavoriteAsync = createAsyncThunk(
   'user/updateFavorite',
   async ({ buildId, updatedBuild }, { rejectWithValue }) => {
@@ -283,7 +255,6 @@ export const refreshToken = createAsyncThunk(
         throw new Error('Не удалось обновить токен');
       }
       const data = await res.json();
-      // Сохраняем новый токен
       localStorage.setItem('token', data.token);
       return data.token;
     } catch (error) {
@@ -307,18 +278,16 @@ const userSlice = createSlice({
       localStorage.setItem("userData", JSON.stringify(user));
     },
     logout(state) {
-      const userId = state.user?.id;
-      
+      const userId = state.user?.id;  
       if (userId) {
         localStorage.removeItem(`basket_${userId}`);
         localStorage.removeItem(`favorites_${userId}`);
-        localStorage.removeItem(`orders_${userId}`); // Удаляем заказы
+        localStorage.removeItem(`orders_${userId}`); 
       }
-      
       state.user = null;
       state.token = null;
       state.favorites = [];
-      state.orders = []; // Очищаем заказы
+      state.orders = []; 
       state.isInitialized = true;
       
       localStorage.removeItem("token");
@@ -343,7 +312,6 @@ const userSlice = createSlice({
         localStorage.setItem(`favorites_${state.user.id}`, JSON.stringify(state.favorites));
       }
     },
-    // Добавляем редьюсер для заказов
     addOrder(state, action) {
       state.orders.push(action.payload);
       if (state.user) {
@@ -362,9 +330,8 @@ const userSlice = createSlice({
           state.user = action.payload.user;
           state.token = action.payload.token;
           state.favorites = action.payload.favorites || [];
-          state.orders = action.payload.orders || []; // Устанавливаем заказы
-          state.isInitialized = true;
-          
+          state.orders = action.payload.orders || []; 
+          state.isInitialized = true;   
           if (state.user) {
             localStorage.setItem("currentUserId", action.payload.user.id);
             localStorage.setItem(`favorites_${action.payload.user.id}`, JSON.stringify(action.payload.favorites || []));
@@ -374,7 +341,7 @@ const userSlice = createSlice({
           state.user = null;
           state.token = null;
           state.favorites = [];
-          state.orders = []; // Очищаем заказы
+          state.orders = []; 
           state.isInitialized = true;
         }
       })
@@ -384,7 +351,7 @@ const userSlice = createSlice({
         state.user = null;
         state.token = null;
         state.favorites = [];
-        state.orders = []; // Очищаем заказы
+        state.orders = []; 
       })
       .addCase(addFavoriteAsync.fulfilled, (state, action) => {
         state.favorites.push(action.payload);
@@ -431,7 +398,6 @@ const userSlice = createSlice({
       });
   },
 });
-
 export const {
   setUser,
   logout,

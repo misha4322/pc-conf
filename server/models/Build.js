@@ -17,7 +17,6 @@ export default class Build {
     );
     return rows[0] || null;
   }
-
   static async addComponents(build_id, components) {
     await Promise.all(
       components.map(component_id => 
@@ -29,7 +28,6 @@ export default class Build {
       )
     );
   }
-
   static async getComponents(build_id) {
     const { rows } = await pool.query(
       `SELECT c.* 

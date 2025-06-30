@@ -171,7 +171,6 @@ const basketCount = useSelector(state => {
           </nav>
         </div>
       </header>
-
       <Outlet />
     </>
   );

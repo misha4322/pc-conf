@@ -489,13 +489,13 @@
   font-size: 1.2rem;
 }
 
-/* Анимации */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Кастомизация скроллбара */
+
 .ordersContainer::-webkit-scrollbar {
   width: 8px;
 }
